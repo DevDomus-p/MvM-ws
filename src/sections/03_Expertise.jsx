@@ -1,4 +1,4 @@
-﻿import { useRef } from 'react'
+import { useRef } from 'react'
 import { useExpertiseAnimation } from '../hooks/useExpertiseAnimation'
 
 const PILARES = [
@@ -42,15 +42,13 @@ export default function ExpertiseSection() {
       className="bg-navy-900"
       style={{ overflow: 'hidden' }}
     >
-      <div
-        className="max-w-8xl mx-auto px-6 lg:px-16 py-24 min-h-screen"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '4rem',
-          alignItems: 'center',
-        }}
-      >
+      {/*
+        Mobile:  columna única, menos padding, sin min-h-screen
+        Desktop: dos columnas, gap amplio, mínimo una pantalla de alto
+      */}
+      <div className="max-w-8xl mx-auto px-6 lg:px-16 py-16 md:py-24 md:min-h-screen grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+
+        {/* Columna izquierda — título y dots */}
         <div>
           <p className="mb-7 text-[10px] font-semibold uppercase tracking-[0.42em] text-gold-400/92">
             Áreas de Expertise
@@ -58,12 +56,12 @@ export default function ExpertiseSection() {
 
           <h2
             className="font-black text-cream-50"
-            style={{ fontSize: 'clamp(2.35rem, 4.9vw, 4.85rem)', lineHeight: 0.97, letterSpacing: '-0.055em' }}
+            style={{ fontSize: 'clamp(2rem, 4.9vw, 4.85rem)', lineHeight: 0.97, letterSpacing: '-0.055em' }}
           >
             Tres pilares de <em className="text-key-italic-light">transformación gubernamental</em>
           </h2>
 
-          <div className="flex gap-3 mt-12">
+          <div className="flex gap-3 mt-10 md:mt-12">
             {PILARES.map((_, i) => (
               <div
                 key={i}
@@ -79,33 +77,39 @@ export default function ExpertiseSection() {
           </div>
         </div>
 
-        <div className="relative" style={{ height: '60vh' }}>
+        {/* Columna derecha — paneles apilados con posición absoluta.
+            En desktop: auto-ciclo controlado por scroll + pin (useExpertiseAnimation).
+            En mobile:  auto-ciclo cada 3.5s sin pin (Fase 1 matchMedia). */}
+        <div
+          className="relative w-full"
+          style={{ height: '60vh', minHeight: '320px' }}
+        >
           {PILARES.map((pilar, i) => (
             <div
               key={i}
               ref={el => { panelsRef.current[i] = el }}
               className="absolute inset-0 flex flex-col justify-center border border-white/[0.07] bg-navy-800/50"
-              style={{ padding: '2.5rem', borderRadius: '16px' }}
+              style={{ padding: '2rem', borderRadius: '16px' }}
             >
-              <span className="mb-5 text-[10px] font-semibold uppercase tracking-[0.34em] text-gold-400/90">
+              <span className="mb-4 text-[10px] font-semibold uppercase tracking-[0.34em] text-gold-400/90">
                 Pilar {String(i + 1).padStart(2, '0')}
               </span>
 
               <h3
-                className="mb-6 font-bold text-cream-50"
-                style={{ fontSize: 'clamp(2rem, 3.3vw, 3.05rem)', lineHeight: 0.98, letterSpacing: '-0.04em' }}
+                className="mb-5 font-bold text-cream-50"
+                style={{ fontSize: 'clamp(1.7rem, 3.3vw, 3.05rem)', lineHeight: 0.98, letterSpacing: '-0.04em' }}
               >
                 {pilar.titulo}
               </h3>
 
-              <p className="text-[0.98rem] leading-[1.92] tracking-[0.01em] text-cream-200/86" style={{ maxWidth: '36ch' }}>
+              <p className="text-[0.95rem] leading-[1.85] tracking-[0.01em] text-cream-200/86" style={{ maxWidth: '36ch' }}>
                 {pilar.descripcion}
               </p>
 
               <span
-                className="absolute bottom-6 right-8 font-black select-none pointer-events-none"
+                className="absolute bottom-4 right-6 font-black select-none pointer-events-none"
                 style={{
-                  fontSize: 'clamp(5rem, 12vw, 9rem)',
+                  fontSize: 'clamp(4rem, 12vw, 9rem)',
                   color: 'rgba(255,255,255,0.04)',
                   lineHeight: 1,
                 }}
@@ -116,6 +120,7 @@ export default function ExpertiseSection() {
             </div>
           ))}
         </div>
+
       </div>
     </section>
   )

@@ -145,29 +145,29 @@ export default function VisionSection() {
   )
 
   return (
-    <section id="vision" ref={sectionRef} className="relative min-h-[280vh] bg-navy-900">
+    <section id="vision" ref={sectionRef} className="relative min-h-[160vh] md:min-h-[280vh] bg-navy-900">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(48,193,34,0.16),transparent_34%),linear-gradient(180deg,rgba(0,0,0,0.92),rgba(0,0,0,1))]"
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 grid-overlay opacity-35" aria-hidden="true" />
 
-      <div ref={stageRef} className="sticky top-0 h-screen min-h-[760px] overflow-hidden">
+      <div ref={stageRef} className="sticky top-0 h-screen min-h-[580px] md:min-h-[760px] overflow-hidden">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
           <div
             ref={glowRef}
-            className="absolute h-[18rem] w-[18rem] rounded-full bg-gold-500/20 blur-3xl"
+            className="absolute h-[12rem] w-[12rem] md:h-[18rem] md:w-[18rem] rounded-full bg-gold-500/20 blur-3xl"
             style={{ opacity: 0.18 }}
           />
           <div
             ref={outerRingRef}
             className="absolute rounded-full border border-gold-400/35"
-            style={{ width: '24rem', height: '24rem', opacity: 0.8 }}
+            style={{ width: 'clamp(14rem, 55vw, 24rem)', height: 'clamp(14rem, 55vw, 24rem)', opacity: 0.8 }}
           />
           <div
             ref={innerRingRef}
             className="absolute rounded-full border border-cream-50/12"
-            style={{ width: '18rem', height: '18rem', opacity: 0.55 }}
+            style={{ width: 'clamp(10rem, 40vw, 18rem)', height: 'clamp(10rem, 40vw, 18rem)', opacity: 0.55 }}
           />
           <div className="absolute h-3 w-3 rounded-full bg-gold-300/80 shadow-[0_0_30px_rgba(48,193,34,0.65)]" />
         </div>
@@ -199,7 +199,7 @@ export default function VisionSection() {
 
             <div
               ref={pillarsRef}
-              className="mt-16 grid w-full max-w-5xl grid-cols-1 gap-5 text-left md:grid-cols-3"
+              className="mt-8 md:mt-16 grid w-full max-w-5xl grid-cols-1 gap-5 text-left md:grid-cols-3"
             >
               {PILLARS.map((item) => (
                 <article
