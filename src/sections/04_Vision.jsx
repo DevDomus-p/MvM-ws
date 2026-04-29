@@ -46,7 +46,8 @@ export default function VisionSection() {
     () => {
       const mm = gsap.matchMedia()
 
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // ── Desktop con movimiento — scrub narrativo completo ───────────────────
+      mm.add('(prefers-reduced-motion: no-preference) and (min-width: 768px)', () => {
         const pillarItems = pillarsRef.current?.querySelectorAll('[data-pillar]') ?? []
 
         gsap.set(labelRef.current, { y: 24, autoAlpha: 0 })
@@ -67,59 +68,69 @@ export default function VisionSection() {
           },
         })
 
-        tl.fromTo(
-          outerRingRef.current,
-          { scale: 0.24, autoAlpha: 0.8 },
-          { scale: 2.35, autoAlpha: 1, ease: 'none' },
-          0
-        )
-          .fromTo(
-            innerRingRef.current,
-            { scale: 0.18, autoAlpha: 0.55 },
-            { scale: 1.95, autoAlpha: 0.95, ease: 'none' },
-            0.02
-          )
-          .fromTo(
-            glowRef.current,
-            { scale: 0.35, autoAlpha: 0.18 },
-            { scale: 1.7, autoAlpha: 0.45, ease: 'none' },
-            0
-          )
-          .fromTo(
-            labelRef.current,
-            { y: 24, autoAlpha: 0 },
-            { y: 0, autoAlpha: 1, duration: 0.22, ease: 'power2.out' },
-            0.24
-          )
-          .fromTo(
-            headingRef.current,
-            { scale: 0.82, y: 44, autoAlpha: 0 },
-            { scale: 1, y: 0, autoAlpha: 1, duration: 0.32, ease: 'power3.out' },
-            0.3
-          )
-          .to(
-            headingRef.current,
-            { scale: 1.06, y: -10, autoAlpha: 0.96, duration: 0.4, ease: 'none' },
-            0.6
-          )
-          .to(
-            pillarItems,
-            { opacity: 1, y: 0, duration: 0.28, stagger: 0.08, ease: 'power3.out' },
-            0.68
-          )
+        tl.fromTo(outerRingRef.current, { scale: 0.24, autoAlpha: 0.8 }, { scale: 2.35, autoAlpha: 1, ease: 'none' }, 0)
+          .fromTo(innerRingRef.current, { scale: 0.18, autoAlpha: 0.55 }, { scale: 1.95, autoAlpha: 0.95, ease: 'none' }, 0.02)
+          .fromTo(glowRef.current, { scale: 0.35, autoAlpha: 0.18 }, { scale: 1.7, autoAlpha: 0.45, ease: 'none' }, 0)
+          .fromTo(labelRef.current, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.22, ease: 'power2.out' }, 0.24)
+          .fromTo(headingRef.current, { scale: 0.82, y: 44, autoAlpha: 0 }, { scale: 1, y: 0, autoAlpha: 1, duration: 0.32, ease: 'power3.out' }, 0.3)
+          .to(headingRef.current, { scale: 1.06, y: -10, autoAlpha: 0.96, duration: 0.4, ease: 'none' }, 0.6)
+          .to(pillarItems, { opacity: 1, y: 0, duration: 0.28, stagger: 0.08, ease: 'power3.out' }, 0.68)
 
         return () => {
           gsap.set(
-            [
-              labelRef.current,
-              headingRef.current,
-              glowRef.current,
-              outerRingRef.current,
-              innerRingRef.current,
-              ...pillarItems,
-            ],
+            [labelRef.current, headingRef.current, glowRef.current, outerRingRef.current, innerRingRef.current, ...pillarItems],
             { clearProps: 'willChange' }
           )
+        }
+      })
+
+      // ── Móvil con movimiento — sin scrub, entrada simple al viewport ─────────
+      // El scrub sobre 160vh dejaba los elementos con opacity:0 inline sin revelar.
+      // En móvil: los anillos aparecen a tamaño natural y el contenido entra con
+      // un fade suave cuando la sección entra al viewport.
+      mm.add('(prefers-reduced-motion: no-preference) and (max-width: 767px)', () => {
+        const pillarItems = pillarsRef.current?.querySelectorAll('[data-pillar]') ?? []
+
+        // Revelar inmediatamente los elementos que tenían opacity:0 inline en JSX
+        gsap.set(labelRef.current, { opacity: 1, y: 0 })
+        gsap.set(headingRef.current, { opacity: 1, scale: 1, y: 0 })
+
+        // Entrada suave del label + heading al entrar la sección en viewport
+        gsap.fromTo(
+          [labelRef.current, headingRef.current],
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+
+        // Entrada escalonada de los pilares
+        gsap.fromTo(
+          pillarItems,
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.55,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: pillarsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+
+        return () => {
+          gsap.killTweensOf([labelRef.current, headingRef.current, ...pillarItems])
         }
       })
 
@@ -145,14 +156,14 @@ export default function VisionSection() {
   )
 
   return (
-    <section id="vision" ref={sectionRef} className="relative min-h-[160vh] md:min-h-[280vh] bg-navy-900">
+    <section id="vision" ref={sectionRef} className="relative md:min-h-[280vh] bg-navy-900">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(48,193,34,0.16),transparent_34%),linear-gradient(180deg,rgba(0,0,0,0.92),rgba(0,0,0,1))]"
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 grid-overlay opacity-35" aria-hidden="true" />
 
-      <div ref={stageRef} className="sticky top-0 h-screen min-h-[580px] md:min-h-[760px] overflow-hidden">
+      <div ref={stageRef} className="top-0 md:sticky h-auto md:h-screen md:min-h-[760px] overflow-visible md:overflow-hidden">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
           <div
             ref={glowRef}

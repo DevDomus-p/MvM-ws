@@ -255,7 +255,7 @@ export default function AboutSection() {
                   {CAPABILITY_POINTS.map((item, index) => (
                     <article
                       key={`${cloneIndex}-${index}-${item}`}
-                      className="flex min-w-[17.75rem] max-w-[17.75rem] items-start gap-4 rounded-[22px] border border-navy-900/12 bg-white/96 px-4 py-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] sm:min-w-[20rem] sm:max-w-[20rem] lg:min-w-[21rem] lg:max-w-[21rem]"
+                      className="flex min-w-[15rem] max-w-[15rem] items-start gap-4 rounded-[22px] border border-navy-900/12 bg-white/96 px-4 py-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] sm:min-w-[20rem] sm:max-w-[20rem] lg:min-w-[21rem] lg:max-w-[21rem]"
                     >
                       <span className="mt-0.5 flex h-9 w-9 flex-none items-center justify-center rounded-full border border-gold-500/24 bg-gold-500/16 text-[0.64rem] font-bold uppercase tracking-[0.14em] text-gold-800">
                         {String(index + 1).padStart(2, '0')}
