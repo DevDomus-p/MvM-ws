@@ -1,0 +1,6 @@
+export const EASE_EXPO_OUT = 'expo.out'
+export const EASE_POWER3_OUT = 'power3.out'
+export const EASE_POWER2_OUT = 'power2.out'
+export const EASE_POWER4_OUT = 'power4.out'
+export const EASE_CIRC_OUT = 'circ.out'
+export const EASE_NONE = 'none'

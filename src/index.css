@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-navy-900 text-cream-200 font-sans antialiased;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+    font-feature-settings: 'ss01' 1, 'cv11' 1, 'cv03' 1;
+    font-synthesis-weight: none;
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: rgba(48, 193, 34, 0.25);
+    color: #FAFAF8;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer utilities {
+  .text-display {
+    font-size: clamp(3rem, 8vw, 8rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .text-display-sm {
+    font-size: clamp(2rem, 5vw, 5rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .text-headline {
+    font-size: clamp(1.5rem, 3vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .text-kicker {
+    font-size: 0.68rem;
+    line-height: 1;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .text-body-premium {
+    line-height: 1.85;
+    letter-spacing: 0.01em;
+  }
+
+  .text-key-strong-dark {
+    @apply font-bold text-navy-900;
+    letter-spacing: -0.015em;
+  }
+
+  .text-key-strong-light {
+    @apply font-bold text-cream-50;
+    letter-spacing: -0.015em;
+  }
+
+  .text-key-italic-dark {
+    @apply font-bold italic text-gold-700;
+    letter-spacing: -0.015em;
+  }
+
+  .text-key-italic-light {
+    @apply font-bold italic text-gold-300;
+    letter-spacing: -0.015em;
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+}
