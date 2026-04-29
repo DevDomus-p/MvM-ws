@@ -14,102 +14,92 @@ export function useExpertiseAnimation(sectionRef, panelsRef, dotsRef) {
     const dots    = dotsRef.current.filter(Boolean)
     if (!section || panels.length === 0) return
 
-    // ── prefers-reduced-motion: show all panels statically ──────────────────
+    // ── prefers-reduced-motion: mostrar todos los paneles estáticos ──────────
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       gsap.set(panels, { scale: 1, autoAlpha: 1 })
       return
     }
 
-    // ── initial state ────────────────────────────────────────────────────────
-    // All panels invisible + scaled-down (CodePen pattern)
-    gsap.set(panels, { scale: 0.8, autoAlpha: 0 })
-    // First panel visible immediately
-    gsap.set(panels[0], { scale: 1, autoAlpha: 1 })
-    // Dots
-    if (dots.length) {
-      gsap.set(dots, { backgroundColor: DOT_INACTIVE })
-      gsap.set(dots[0], { backgroundColor: GOLD })
-    }
+    // ── helpers compartidos ──────────────────────────────────────────────────
 
-    let activeIndex = 0
-
-    // ── transition function (adapted from CodePen's setSection) ─────────────
-    // force=true bypasses the guard — used after resize/refresh
-    function setPanel(newIndex, force = false) {
-      if (!force && newIndex === activeIndex) return
-
-      const oldPanel = panels[activeIndex]
-      const newPanel = panels[newIndex]
-
-      gsap.to(oldPanel, {
-        scale: 0.8,
-        autoAlpha: 0,
-        duration: 0.4,
-        ease: 'power2.in',
-        overwrite: 'auto',
-      })
-      gsap.to(newPanel, {
-        scale: 1,
-        autoAlpha: 1,
-        duration: 0.5,
-        ease: 'power3.out',
-        delay: 0.08,
-        overwrite: 'auto',
-      })
-
+    /** Anima la transición entre paneles y devuelve el nuevo índice activo. */
+    function transitionTo(active, next) {
+      if (next === active) return active
+      gsap.to(panels[active], { scale: 0.8, autoAlpha: 0, duration: 0.4, ease: 'power2.in',  overwrite: 'auto' })
+      gsap.to(panels[next],   { scale: 1,   autoAlpha: 1, duration: 0.5, delay: 0.08, ease: 'power3.out', overwrite: 'auto' })
       if (dots.length) {
-        gsap.to(dots[activeIndex], {
-          backgroundColor: DOT_INACTIVE,
-          duration: 0.3,
-          overwrite: 'auto',
-        })
-        gsap.to(dots[newIndex], {
-          backgroundColor: GOLD,
-          duration: 0.3,
-          overwrite: 'auto',
-        })
+        gsap.to(dots[active], { backgroundColor: DOT_INACTIVE, duration: 0.3, overwrite: 'auto' })
+        gsap.to(dots[next],   { backgroundColor: GOLD,         duration: 0.3, overwrite: 'auto' })
       }
-
-      activeIndex = newIndex
+      return next
     }
 
-    // ── helper: compute correct panel index from progress ───────────────────
+    /** Salta al índice dado sin tween — usado en onRefresh y al init. */
+    function jumpTo(index) {
+      gsap.killTweensOf(panels)
+      gsap.killTweensOf(dots)
+      gsap.set(panels, { scale: 0.8, autoAlpha: 0 })
+      gsap.set(panels[index], { scale: 1, autoAlpha: 1 })
+      if (dots.length) {
+        gsap.set(dots, { backgroundColor: DOT_INACTIVE })
+        gsap.set(dots[index], { backgroundColor: GOLD })
+      }
+    }
+
+    /** Índice correspondiente al progreso 0→1 del ScrollTrigger. */
     function indexFromProgress(progress) {
       return Math.min(panels.length - 1, Math.floor(progress * panels.length))
     }
 
-    // ── single pin trigger + onUpdate to detect active panel ────────────────
-    // Progress 0→0.33 = panel 0, 0.33→0.67 = panel 1, 0.67→1.0 = panel 2
-    const st = ScrollTrigger.create({
-      id: 'expertise-panels',
-      trigger: section,
-      start: 'top top',
-      end: '+=200%',   // 2 extra viewport heights → 3 "pages" total
-      pin: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      refreshPriority: -1,
-      onUpdate: (self) => {
-        setPanel(indexFromProgress(self.progress))
-      },
-      // After viewport resize GSAP recalculates positions & refires with
-      // the current scroll — force-sync so the correct panel is always shown
-      onRefresh: (self) => {
-        const newIndex = indexFromProgress(self.progress)
-        // Jump state immediately (no tween) for a clean refresh
-        gsap.killTweensOf(panels)
-        gsap.set(panels, { scale: 0.8, autoAlpha: 0 })
-        gsap.set(panels[newIndex], { scale: 1, autoAlpha: 1 })
-        if (dots.length) {
-          gsap.set(dots, { backgroundColor: DOT_INACTIVE })
-          gsap.set(dots[newIndex], { backgroundColor: GOLD })
-        }
-        activeIndex = newIndex
-      },
+    // ── matchMedia ───────────────────────────────────────────────────────────
+    const mm = gsap.matchMedia()
+
+    // Desktop — scroll pin con transición entre paneles (comportamiento actual)
+    mm.add('(min-width: 768px)', () => {
+      jumpTo(0)
+      let active = 0
+
+      const st = ScrollTrigger.create({
+        id: 'expertise-panels',
+        trigger: section,
+        start: 'top top',
+        end: '+=200%',
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        refreshPriority: -1,
+        onUpdate: (self) => {
+          active = transitionTo(active, indexFromProgress(self.progress))
+        },
+        onRefresh: (self) => {
+          const next = indexFromProgress(self.progress)
+          jumpTo(next)
+          active = next
+        },
+      })
+
+      return () => st.kill()
     })
 
-    return () => {
-      st.kill()
-    }
+    // Mobile — sin pin; los paneles rotan automáticamente cada 3.5 s.
+    // El usuario no pierde scroll y puede ver los tres pilares sin fricciones.
+    // Fase 3 convertirá esto a columna única con layout propio.
+    mm.add('(max-width: 767px)', () => {
+      jumpTo(0)
+      let active = 0
+
+      const tick = setInterval(() => {
+        const next = (active + 1) % panels.length
+        active = transitionTo(active, next)
+      }, 3500)
+
+      return () => {
+        clearInterval(tick)
+        gsap.killTweensOf(panels)
+        gsap.killTweensOf(dots)
+      }
+    })
+
+    return () => mm.revert()
   }, [sectionRef, panelsRef, dotsRef])
 }

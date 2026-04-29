@@ -43,7 +43,8 @@ export default function HeroVideo({ heading, subheading, cta }) {
     <div
       id="hero"
       ref={containerRef}
-      style={{ height: '100vh', position: 'relative', overflow: 'hidden' }}
+      className="h-screen"
+      style={{ position: 'relative', overflow: 'hidden' }}
     >
       {/* GPU-accelerated scroll-driven video */}
       <video
