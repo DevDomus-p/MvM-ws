@@ -156,14 +156,14 @@ export default function VisionSection() {
   )
 
   return (
-    <section id="vision" ref={sectionRef} className="relative min-h-[160vh] md:min-h-[280vh] bg-navy-900">
+    <section id="vision" ref={sectionRef} className="relative md:min-h-[280vh] bg-navy-900">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(48,193,34,0.16),transparent_34%),linear-gradient(180deg,rgba(0,0,0,0.92),rgba(0,0,0,1))]"
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 grid-overlay opacity-35" aria-hidden="true" />
 
-      <div ref={stageRef} className="sticky top-0 h-screen min-h-[580px] md:min-h-[760px] overflow-hidden">
+      <div ref={stageRef} className="top-0 md:sticky h-auto md:h-screen md:min-h-[760px] overflow-visible md:overflow-hidden">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
           <div
             ref={glowRef}
