@@ -15,26 +15,32 @@ export default function HeroVideo({ heading, subheading, cta }) {
   const videoRef = useRef(null)
   const textRef = useRef(null)
 
-  // Pass both refs — hook drives video.currentTime via ScrollTrigger scrub + pin
+  // Desktop: scrub narrativo del video con pin.
+  // Mobile:  video en loop como fondo ambiente, sin pin (Fase 2).
   useScrollVideo(videoRef, containerRef)
 
   useGSAP(
     () => {
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (prefersReduced) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
       const items = textRef.current?.querySelectorAll('[data-hero-item]')
       if (!items?.length) return
 
-      gsap.set(items, { y: 60, opacity: 0 })
-      gsap.to(items, {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: 'expo.out',
-        stagger: 0.18,
-        delay: 0.5,
+      const mm = gsap.matchMedia()
+
+      // Desktop — entrada desde más abajo, stagger largo
+      mm.add('(min-width: 768px)', () => {
+        gsap.set(items, { y: 60, opacity: 0 })
+        gsap.to(items, { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: 0.18, delay: 0.5 })
       })
+
+      // Mobile — entrada más corta y rápida; el texto ya arranca más arriba
+      mm.add('(max-width: 767px)', () => {
+        gsap.set(items, { y: 35, opacity: 0 })
+        gsap.to(items, { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', stagger: 0.12, delay: 0.3 })
+      })
+
+      return () => mm.revert()
     },
     { scope: containerRef }
   )
@@ -53,15 +59,12 @@ export default function HeroVideo({ heading, subheading, cta }) {
         playsInline
         muted
         className="absolute inset-0 w-full h-full object-cover"
-        style={{
-          willChange: 'transform',
-          transform: 'translateZ(0)',
-        }}
+        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
       >
         <source src="/MOISES-HERO.mp4" type="video/mp4" />
       </video>
 
-      {/* Directional overlay — heavy left (text area), transparent right (Moisés) */}
+      {/* Overlay desktop — degradado lateral, favorece legibilidad del texto a la izquierda */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -74,12 +77,18 @@ export default function HeroVideo({ heading, subheading, cta }) {
         }}
       />
 
-      {/* Subtle top vignette for navbar legibility */}
+      {/* Overlay móvil — degradado ascendente que garantiza legibilidad del texto en la zona baja */}
+      <div
+        className="absolute inset-0 pointer-events-none md:hidden"
+        style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 45%, transparent 100%)',
+        }}
+      />
+
+      {/* Vignette superior para la navbar */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 25%)',
-        }}
+        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 25%)' }}
       />
 
       {/* Decorative grid */}
@@ -92,11 +101,15 @@ export default function HeroVideo({ heading, subheading, cta }) {
         aria-hidden="true"
       />
 
-      {/* Text block — bottom-left, max 520px, clear of Moisés on the right */}
+      {/* Bloque de texto
+          Desktop: anclado bottom-left con maxWidth 520px (igual que antes)
+          Mobile:  ancho casi completo, más arriba del borde inferior para
+                   evitar que la barra del browser lo tape con dvh */}
       <div
         ref={textRef}
-        className="absolute z-10"
-        style={{ bottom: '8%', left: '6%', maxWidth: '520px' }}
+        className="absolute z-10
+          bottom-[18%] left-[5%] right-[5%]
+          md:bottom-[8%] md:left-[6%] md:right-auto md:max-w-[520px]"
       >
         <p
           data-hero-item
@@ -110,7 +123,7 @@ export default function HeroVideo({ heading, subheading, cta }) {
           data-hero-item
           className="mb-6 max-w-[11ch] font-black text-cream-50"
           style={{
-            fontSize: 'clamp(2.95rem, 5.2vw, 4.9rem)',
+            fontSize: 'clamp(2.4rem, 5.2vw, 4.9rem)',
             lineHeight: 0.95,
             letterSpacing: '-0.05em',
             textShadow: '0 18px 48px rgba(0, 0, 0, 0.26)',
@@ -121,8 +134,8 @@ export default function HeroVideo({ heading, subheading, cta }) {
 
         <p
           data-hero-item
-          className="mb-9 max-w-[30rem] text-[1.04rem] font-normal tracking-[0.01em] text-body-premium text-cream-200/82"
-          style={{ maxWidth: '420px' }}
+          className="mb-9 text-[1.04rem] font-normal tracking-[0.01em] text-body-premium text-cream-200/82
+            max-w-full md:max-w-[420px]"
         >
           {subheading}
         </p>
@@ -146,9 +159,9 @@ export default function HeroVideo({ heading, subheading, cta }) {
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — solo desktop; en móvil no hay scrub que comunicar */}
       <div
-        className="absolute z-10 flex flex-col items-center gap-3 pointer-events-none"
+        className="absolute z-10 hidden md:flex flex-col items-center gap-3 pointer-events-none"
         style={{ right: '3rem', bottom: '4rem' }}
         aria-hidden="true"
       >
