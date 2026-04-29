@@ -43,13 +43,12 @@ export default function ExpertiseSection() {
       style={{ overflow: 'hidden' }}
     >
       <div
-        className="max-w-8xl mx-auto px-6 lg:px-16 py-24"
+        className="max-w-8xl mx-auto px-6 lg:px-16 py-24 min-h-screen"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '4rem',
           alignItems: 'center',
-          minHeight: '100vh',
         }}
       >
         <div>

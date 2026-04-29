@@ -15,11 +15,11 @@ export function useScrollVideo(videoRef, containerRef) {
     video.muted = true
     video.playsInline = true
 
-    const onLoaded = () => {
-      const duration = video.duration
-      if (!duration || !isFinite(duration)) return
+    let mm = null
 
-      // Kill any previous hero ScrollTrigger to avoid conflicts
+    // Crea el ScrollTrigger con el end distance correcto para cada breakpoint.
+    // Devuelve la función de cleanup que matchMedia ejecuta al cambiar contexto.
+    const makeScrub = (end, duration) => {
       ScrollTrigger.getAll()
         .filter((t) => t.vars.id === 'hero-video-scrub')
         .forEach((t) => t.kill())
@@ -28,13 +28,30 @@ export function useScrollVideo(videoRef, containerRef) {
         id: 'hero-video-scrub',
         trigger: container,
         start: 'top top',
-        end: '+=500%',   // 500vh — hero stays pinned for this full scroll distance
+        end,         // desktop: +=500%  |  mobile: +=200%
         pin: true,
-        scrub: 1,        // 1s smoothing for fluid playback
+        scrub: 1,
         onUpdate: (self) => {
           video.currentTime = self.progress * duration
         },
       })
+
+      return () => {
+        ScrollTrigger.getAll()
+          .filter((t) => t.vars.id === 'hero-video-scrub')
+          .forEach((t) => t.kill())
+      }
+    }
+
+    const onLoaded = () => {
+      const duration = video.duration
+      if (!duration || !isFinite(duration)) return
+
+      mm = gsap.matchMedia()
+      // Desktop — recorrido largo para el scrub narrativo del video
+      mm.add('(min-width: 768px)', () => makeScrub('+=500%', duration))
+      // Mobile — recorrido corto; evita que el hero consuma demasiado scroll
+      mm.add('(max-width: 767px)', () => makeScrub('+=200%', duration))
     }
 
     if (video.readyState >= 2) {
@@ -44,6 +61,7 @@ export function useScrollVideo(videoRef, containerRef) {
     }
 
     return () => {
+      mm?.revert()
       ScrollTrigger.getAll()
         .filter((t) => t.vars.id === 'hero-video-scrub')
         .forEach((t) => t.kill())
