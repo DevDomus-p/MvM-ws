@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
+import brandLogo from '../../cropped-Moises_Villaverde_Mier_013-1-2.png'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -52,72 +53,64 @@ export default function Navbar() {
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-navy-900/95 backdrop-blur-xl border-b border-white/[0.05] py-3'
+          ? 'border-b border-white/[0.05] bg-navy-900/95 py-3 backdrop-blur-xl'
           : 'bg-transparent py-6'
       }`}
     >
-      <div className="max-w-8xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-
-        {/* Logo */}
+      <div className="mx-auto flex max-w-8xl items-center justify-between px-6 lg:px-12">
         <a
           href="#hero"
           onClick={(e) => handleLink(e, '#hero')}
-          className="flex items-center gap-3 group"
+          className="group flex items-center"
           aria-label="Moisés Villaverde Mier — inicio"
         >
-          <div className="w-8 h-8 border border-gold-500/50 flex items-center justify-center transition-colors duration-300 group-hover:border-gold-400">
-            <span className="text-gold-400 font-black text-[9px] tracking-[0.32em]">MV</span>
-          </div>
-          <span className="hidden text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-cream-100/88 sm:block">
-            Moisés Villaverde
-          </span>
+          <img
+            src={brandLogo}
+            alt="Villaverde"
+            className="h-auto w-[10.75rem] object-contain transition-opacity duration-300 group-hover:opacity-90 sm:w-[12rem] lg:w-[13.25rem]"
+          />
         </a>
 
-        {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-8" aria-label="Navegación principal">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleLink(e, link.href)}
-              className="relative py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-cream-300/78 transition-colors duration-200 group hover:text-cream-50"
+              className="group relative py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-cream-300/78 transition-colors duration-200 hover:text-cream-50"
             >
               {link.label}
-              <span className="absolute bottom-0 left-0 w-0 h-px bg-gold-500 group-hover:w-full transition-all duration-300 ease-expo-out" />
+              <span className="absolute bottom-0 left-0 h-px w-0 bg-gold-500 transition-all duration-300 ease-expo-out group-hover:w-full" />
             </a>
           ))}
         </nav>
 
-        {/* CTA + hamburger */}
         <div className="flex items-center gap-4">
           <a
             href="#contact"
             onClick={(e) => handleLink(e, '#contact')}
-            className="hidden lg:inline-flex items-center gap-2 bg-gold-500 px-5 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-navy-900 transition-colors duration-200 group hover:bg-gold-400"
+            className="group hidden items-center gap-2 bg-gold-500 px-5 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-navy-900 transition-colors duration-200 hover:bg-gold-400 lg:inline-flex"
           >
             Agendar Consulta
             <span className="transition-transform duration-200 group-hover:translate-x-0.5">↗</span>
           </a>
 
           <button
-            className="lg:hidden p-2 text-cream-200 focus:outline-none"
+            className="p-2 text-cream-200 focus:outline-none lg:hidden"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={menuOpen}
           >
-            <div className="w-5 h-3.5 flex flex-col justify-between">
-              <span className={`block h-px bg-current origin-center transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} />
-              <span className={`block h-px bg-current transition-all duration-300 ${menuOpen ? 'opacity-0 scale-x-0' : ''}`} />
-              <span className={`block h-px bg-current origin-center transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`} />
+            <div className="flex h-3.5 w-5 flex-col justify-between">
+              <span className={`block h-px origin-center bg-current transition-all duration-300 ${menuOpen ? 'translate-y-[6px] rotate-45' : ''}`} />
+              <span className={`block h-px bg-current transition-all duration-300 ${menuOpen ? 'scale-x-0 opacity-0' : ''}`} />
+              <span className={`block h-px origin-center bg-current transition-all duration-300 ${menuOpen ? '-translate-y-[6px] -rotate-45' : ''}`} />
             </div>
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <div
-        className={`lg:hidden overflow-hidden transition-all duration-400 ${menuOpen ? 'max-h-96' : 'max-h-0'}`}
-      >
+      <div className={`overflow-hidden transition-all duration-400 lg:hidden ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
         <div className="glass-dark border-t border-white/[0.05] px-6 py-6">
           <nav className="flex flex-col gap-5" aria-label="Menú móvil">
             {NAV_LINKS.map((link) => (

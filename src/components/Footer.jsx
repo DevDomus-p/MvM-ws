@@ -1,3 +1,5 @@
+import brandLogo from '../../cropped-Moises_Villaverde_Mier_013-1-2.png'
+
 const FOOTER_NAV = [
   { label: 'Sobre Mí', href: '#about' },
   { label: 'Expertise', href: '#expertise' },
@@ -13,17 +15,18 @@ function scrollTo(href) {
 export default function Footer() {
   return (
     <footer className="border-t border-white/[0.05] bg-navy-950">
-      <div className="max-w-8xl mx-auto px-6 lg:px-12 pt-20 pb-10">
+      <div className="mx-auto max-w-8xl px-6 pb-10 pt-20 lg:px-12">
         <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center border border-gold-500/50">
-                <span className="text-[9px] font-black tracking-[0.32em] text-gold-400">MV</span>
-              </div>
-              <div>
-                <p className="text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-cream-100/90">Moisés Villaverde Mier</p>
-                <p className="text-[0.66rem] font-medium uppercase tracking-[0.16em] text-cream-400/58">Doctorante · Administración Pública</p>
-              </div>
+            <div className="mb-6">
+              <img
+                src={brandLogo}
+                alt="Villaverde"
+                className="h-auto w-[12rem] object-contain sm:w-[13.5rem]"
+              />
+              <p className="mt-3 text-[0.66rem] font-medium uppercase tracking-[0.16em] text-cream-400/58">
+                Doctorante · Administración Pública
+              </p>
             </div>
             <p className="max-w-sm text-[0.95rem] leading-[1.88] tracking-[0.01em] text-cream-300/78">
               Más de <strong className="text-key-strong-light">18 años</strong> transformando la gestión pública a través de la <em className="text-key-italic-light">innovación tecnológica</em>. Experto en seguridad pública, ciberseguridad y digitalización de servicios gubernamentales.
