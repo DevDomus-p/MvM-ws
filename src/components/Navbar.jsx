@@ -67,7 +67,7 @@ export default function Navbar() {
           <img
             src={brandLogo}
             alt="Villaverde"
-            className="h-auto w-[10.75rem] object-contain transition-opacity duration-300 group-hover:opacity-90 sm:w-[12rem] lg:w-[13.25rem]"
+            className="h-auto w-[8.5rem] object-contain transition-opacity duration-300 group-hover:opacity-90 sm:w-[12rem] lg:w-[13.25rem]"
           />
         </a>
 
@@ -110,7 +110,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className={`overflow-hidden transition-all duration-400 lg:hidden ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
+      <div className={`overflow-hidden transition-all duration-400 lg:hidden ${menuOpen ? 'max-h-[32rem]' : 'max-h-0'}`}>
         <div className="glass-dark border-t border-white/[0.05] px-6 py-6">
           <nav className="flex flex-col gap-5" aria-label="Menú móvil">
             {NAV_LINKS.map((link) => (

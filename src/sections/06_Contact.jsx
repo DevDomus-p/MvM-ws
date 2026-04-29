@@ -91,7 +91,7 @@ export default function ContactSection() {
 
           <div data-reveal data-reveal-delay="0.15">
             {sent ? (
-              <div className="flex h-full min-h-[400px] flex-col items-center justify-center text-center">
+              <div className="flex h-full min-h-[240px] md:min-h-[400px] flex-col items-center justify-center text-center">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center border border-gold-500/40">
                   <span className="text-xl text-gold-400">✓</span>
                 </div>
